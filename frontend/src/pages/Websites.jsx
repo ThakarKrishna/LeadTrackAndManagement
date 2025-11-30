@@ -36,7 +36,13 @@ export default function Websites() {
 		onSuccess: () => qc.invalidateQueries({ queryKey: ['websites'] })
 	});
 	const autoDetectMutation = useMutation({
-		mutationFn: async (websiteId) => (await api.post(`${endpoints.forms}/auto-detect/${websiteId}`)).data
+		mutationFn: async (websiteId) => (await api.post(`${endpoints.forms}/auto-detect/${websiteId}`)).data,
+		onSuccess: (data) => {
+			alert(`Detected and saved ${data?.count || 0} form(s). Check the Forms page.`);
+		},
+		onError: (err) => {
+			alert(err?.response?.data?.message || 'Auto-detect failed');
+		}
 	});
 
 	const columns = useMemo(() => [
@@ -45,7 +51,14 @@ export default function Websites() {
 		{
 			key: 'actions', header: 'Actions', render: (_, row) => (
 				<div className="flex gap-2">
-					<Button size="sm" variant="secondary" onClick={() => autoDetectMutation.mutate(row._id)}>Auto-detect</Button>
+					<Button
+						size="sm"
+						variant="secondary"
+						onClick={() => autoDetectMutation.mutate(row._id)}
+						disabled={autoDetectMutation.isPending}
+					>
+						{autoDetectMutation.isPending ? 'Detecting...' : 'Auto-detect'}
+					</Button>
 					<Button size="sm" onClick={() => { setSnippetOpen(true); setSelectedFormId(''); }}>Snippet</Button>
 					<Button size="sm" variant="destructive" onClick={() => deleteMutation.mutate(row._id)}>Delete</Button>
 				</div>

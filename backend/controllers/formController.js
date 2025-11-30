@@ -7,7 +7,12 @@ export const autoDetectForms = asyncHandler(async (req, res) => {
 	const { websiteId } = req.params;
 	const website = await Website.findOne({ _id: websiteId, userId: req.user.id });
 	if (!website) return res.status(404).json({ message: 'Website not found' });
-	const formsDetected = await detectFormsOnUrl(website.url);
+	let formsDetected = [];
+	try {
+		formsDetected = await detectFormsOnUrl(website.url);
+	} catch (err) {
+		return res.status(err.status || 500).json({ message: err.message || 'Auto-detect failed' });
+	}
 	// Save forms; avoid duplicates (formUrl + websiteId)
 	const created = [];
 	for (const f of formsDetected) {
@@ -26,7 +31,12 @@ export const autoDetectForms = asyncHandler(async (req, res) => {
 export const extractPreview = asyncHandler(async (req, res) => {
 	const { formUrl } = req.body;
 	if (!formUrl) return res.status(400).json({ message: 'formUrl is required' });
-	const forms = await extractFieldsFromSingleUrl(formUrl);
+	let forms = [];
+	try {
+		forms = await extractFieldsFromSingleUrl(formUrl);
+	} catch (err) {
+		return res.status(err.status || 500).json({ message: err.message || 'Extraction failed' });
+	}
 	res.json({ forms });
 });
 

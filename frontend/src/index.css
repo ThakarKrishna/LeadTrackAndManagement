@@ -12,6 +12,16 @@
 	--foreground: 210 40% 98%;
 }
 
+.dark, :root, html, body {
+	min-height: 100%;
+}
+
+/* Apply theme colors globally so dark mode affects the whole app */
+body {
+	background-color: hsl(var(--background));
+	color: hsl(var(--foreground));
+}
+
 .bg-background { background-color: hsl(var(--background)); }
 .text-foreground { color: hsl(var(--foreground)); }
 .border-border { border-color: hsl(240 5.9% 90%); }
