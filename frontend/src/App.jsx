@@ -44,6 +44,7 @@ export default function App() {
         <Route path="/analytics" element={<Analytics />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      const API_BASE = "https://3e06cb245a3ddd.lhr.life";
     </Routes>
   );
 }
